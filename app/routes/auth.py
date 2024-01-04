@@ -4,9 +4,9 @@ from app.services.auth_service import AuthService
 
 authbp = Blueprint("auth", __name__)
 
-@authbp.route("/register", methods = ["post", "get"])
+@authbp.route("/register", methods = ["Post", "Get"])
 def register():
-    if request.method == "post":
+    if request.method == "POST":
         data = request.form
         try:
             new_user = AuthService.register_user(
@@ -25,11 +25,15 @@ def register():
 
 @authbp.route("/login", methods=["Post", "Get"])
 def login():
-    data = request.form
-    user = AuthService.authenticate_user(username=data["username"], password=data["password"])
-    if user:
-        return jsonify(message= "Login Successful"), 200
-    elif user == None:
-        return jsonify(message="User Not Registered"), 400
+    if request.method == "POST":
+        data = request.form
+        print(data)
+        user = AuthService.authenticate_user(username=data["username"], password=data["password"])
+        if user:
+            return jsonify(message= "Login Successful"), 200
+        elif user == None:
+            return jsonify(message="User Not Registered"), 400
+        else:
+            return jsonify(message= "Wrong Password"), 400
     else:
-        return jsonify(message= "Wrong Password"), 400
+        return render_template("login.html")
